@@ -4,9 +4,12 @@
     "description": "",
     "main": "dist/index.js",
     "scripts": {
-        "start": "parcel serve index.html"
+        "basic": "parcel serve basic.html",
+        "train": "parcel serve train.html"
     },
-    "dependencies": {},
+    "dependencies": {
+        "@tensorflow/tfjs-layers": "^0.9.0"
+    },
     "devDependencies": {
         "parcel-bundler": "^1.10.3"
     },
