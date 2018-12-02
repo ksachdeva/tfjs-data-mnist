@@ -22,6 +22,12 @@ async function onBodyLoad() {
   let n = await only5.next();
   let i = 1;
 
+  const feature = n.value[0] as tfjs.Tensor;
+  const label = n.value[1] as tfjs.Tensor;
+
+  document.getElementById('feature-shape').innerText = feature.shape.toString();
+  document.getElementById('label-shape').innerText = label.shape.toString();
+
   do {
     await toPixels(
         n.value, document.getElementById('canvas' + i) as HTMLCanvasElement);
