@@ -45,11 +45,26 @@ const label = dataElement.value[1] as tfjs.Tensor;
 
 const shuffled5 = await ds.testDataset.shuffle(10).take(5).iterator();
 
+// You can also pass dataset to train the model
+await model.fitDataset(ds.trainDataset.batch(32), {
+    epochs: 1,
+    callbacks: {
+      onBatchEnd: async (batch: number, logs?: tf.Logs) => {
+        batchProgressEl.innerText =
+            `${batch} - ${logs['loss']} -  ${logs['acc']}`;
+      },
+      onEpochEnd: async (epoch: number, logs?: tf.Logs) => {
+        epochEndResultEl.innerText =
+            `${epoch} - ${logs['loss']} -  ${logs['acc']}`;
+      }
+    }
+  });
+
 ```
 
-## Example
+## Examples
 
-### Running the sample
+### Running the samples
 
 ```bash
 
@@ -60,11 +75,18 @@ npm install
 npm install @tensorflow/tfjs-core @tensorflow/tfjs-data --no-save
 
 # change directory into example
-cd example
+cd examples
 
 # do npm install in example
 npm install
 
-# finally run the example
-npm start
+# Run a basic example that shows
+# how to use the api of Dataset
+npm run basic
+
+# Another example is to train a model
+# where I use fitDataset api that takes Dataset
+# as an input
+npm run train
+
 ```
