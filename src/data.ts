@@ -1,5 +1,4 @@
 import * as tf from '@tensorflow/tfjs';
-import {iteratorFromItems, LazyIterator} from '@tensorflow/tfjs-data/dist/iterators/lazy_iterator';
 
 const IMAGE_H = 28;
 const IMAGE_W = 28;
@@ -14,37 +13,23 @@ const MNIST_IMAGES_SPRITE_PATH =
 const MNIST_LABELS_PATH =
     'https://storage.googleapis.com/learnjs-data/model-builder/mnist_labels_uint8';
 
-class ImageDataset extends tf.data.Dataset<tf.data.DataElement> {
-  private _data: Array<[tf.Tensor1D, tf.Tensor1D]> = new Array();
-  private array = new Array();
+function buildDataset(images: Float32Array, labels: Uint8Array) {
+  const numberOfSamples = images.length / IMAGE_SIZE;
 
-  public constructor(images: Float32Array, labels: Uint8Array) {
-    super();
+  let imageIndex = 0;
+  let labelIndex = 0;
+  const array = new Array();
 
-    const numberOfSamples = images.length / IMAGE_SIZE;
+  for (let i = 0; i < numberOfSamples; i++) {
+    const imageArray = images.slice(imageIndex, imageIndex + IMAGE_SIZE);
+    const labelArray = labels.slice(labelIndex, labelIndex + NUM_CLASSES);
+    imageIndex += IMAGE_SIZE;
+    labelIndex += NUM_CLASSES;
 
-    let imageIndex = 0;
-    let labelIndex = 0;
-    for (let i = 0; i < numberOfSamples; i++) {
-      const imageArray = images.slice(imageIndex, imageIndex + IMAGE_SIZE);
-      const imageTensor = tf.tensor1d(imageArray);
-      const labelArray = labels.slice(labelIndex, labelIndex + NUM_CLASSES);
-      const labelTensor = tf.tensor1d(labelArray);
-      imageIndex += IMAGE_SIZE;
-      labelIndex += NUM_CLASSES;
-
-      this._data.push([imageTensor, labelTensor]);
-      this.array.push([imageArray, labelArray]);
-    }
+    array.push([imageArray, labelArray]);
   }
 
-  async iterator(): Promise<LazyIterator<tf.data.DataElement>> {
-    return iteratorFromItems<tf.data.DataElement>(this._data);
-  }
-
-  getArray() {
-    return tf.data.array(this.array);
-  }
+  return tf.data.array(array);
 }
 
 export class MNISTDataset {
@@ -121,10 +106,7 @@ export class MNISTDataset {
     const testImages = datasetImages.slice(IMAGE_SIZE * NUM_TRAIN_ELEMENTS);
     const testLabels = datasetLabels.slice(NUM_CLASSES * NUM_TRAIN_ELEMENTS);
 
-    const train = new ImageDataset(trainImages, trainLabels);
-    const test = new ImageDataset(testImages, testLabels);
-
-    this.trainDataset = train.getArray();
-    this.testDataset = test.getArray();
+    this.trainDataset = buildDataset(trainImages, trainLabels);
+    this.testDataset = buildDataset(testImages, testLabels);
   }
 }
