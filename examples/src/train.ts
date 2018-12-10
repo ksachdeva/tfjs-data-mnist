@@ -1,5 +1,5 @@
 import * as tf from '@tensorflow/tfjs-layers';
-import * as tfc from '@tensorflow/tfjs-core';
+
 import {MNISTDataset} from '../../src';
 
 function buildDenseModel() {
@@ -28,16 +28,16 @@ async function train() {
   const batchProgressEl = document.getElementById('batch-progress');
   const epochEndResultEl = document.getElementById('epoch-end-result');
 
-  console.log(await ds.trainDataset.collectAll());
+  const BATCH_SIZE = 32;
 
-  const fds = ds.trainDataset.map((row: Array<{[key: string]: number}>) => {
-    const [rawFeatures, rawLabel] = row;
-    const convertedFeatures = Object.values(rawFeatures);
-    const convertedLabel = Object.values(rawLabel);
-    return [convertedFeatures, convertedLabel];
-  }).batch(3);
-
-  console.log(await fds.collectAll());
+  const fds = ds.trainDataset
+                  .map((row: Array<{[key: string]: number}>) => {
+                    const [rawFeatures, rawLabel] = row;
+                    const convertedFeatures = Object.values(rawFeatures);
+                    const convertedLabel = Object.values(rawLabel);
+                    return [convertedFeatures, convertedLabel];
+                  })
+                  .batch(BATCH_SIZE);
 
   await model.fitDataset(fds, {
     epochs: 3,
@@ -48,7 +48,7 @@ async function train() {
       },
       onEpochEnd: async (epoch: number, logs?: tf.Logs) => {
         epochEndResultEl.innerText =
-            `${epoch} - ${logs['loss']} -  ${logs['acc']}`;
+            `${epoch + 1} - ${logs['loss']} -  ${logs['acc']}`;
       }
     }
   });
