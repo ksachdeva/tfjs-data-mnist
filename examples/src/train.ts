@@ -1,4 +1,5 @@
 import * as tf from '@tensorflow/tfjs-layers';
+import * as tfc from '@tensorflow/tfjs-core';
 import {MNISTDataset} from '../../src';
 
 function buildDenseModel() {
@@ -27,8 +28,19 @@ async function train() {
   const batchProgressEl = document.getElementById('batch-progress');
   const epochEndResultEl = document.getElementById('epoch-end-result');
 
-  await model.fitDataset(ds.trainDataset.batch(32), {
-    epochs: 1,
+  console.log(await ds.trainDataset.collectAll());
+
+  const fds = ds.trainDataset.map((row: Array<{[key: string]: number}>) => {
+    const [rawFeatures, rawLabel] = row;
+    const convertedFeatures = Object.values(rawFeatures);
+    const convertedLabel = Object.values(rawLabel);
+    return [convertedFeatures, convertedLabel];
+  }).batch(3);
+
+  console.log(await fds.collectAll());
+
+  await model.fitDataset(fds, {
+    epochs: 3,
     callbacks: {
       onBatchEnd: async (batch: number, logs?: tf.Logs) => {
         batchProgressEl.innerText =

@@ -1,13 +1,12 @@
-import * as tfjs from '@tensorflow/tfjs-core';
-import * as tfd from '@tensorflow/tfjs-data';
+import * as tf from '@tensorflow/tfjs';
 
 import {MNISTDataset} from '../../src';
 
 let ds: MNISTDataset = null;
 
-async function toPixels(sample: tfd.DataElement, element: HTMLCanvasElement) {
+async function toPixels(sample: tf.data.DataElement, element: HTMLCanvasElement) {
   const reshapedTensor = sample[0].reshape([28, 28, 1]);
-  await tfjs.toPixels(reshapedTensor, element);
+  await tf.toPixels(reshapedTensor, element);
 }
 
 async function onBodyLoad() {
@@ -22,8 +21,8 @@ async function onBodyLoad() {
   let n = await only5.next();
   let i = 1;
 
-  const feature = n.value[0] as tfjs.Tensor;
-  const label = n.value[1] as tfjs.Tensor;
+  const feature = n.value[0] as tf.Tensor;
+  const label = n.value[1] as tf.Tensor;
 
   document.getElementById('feature-shape').innerText = feature.shape.toString();
   document.getElementById('label-shape').innerText = label.shape.toString();

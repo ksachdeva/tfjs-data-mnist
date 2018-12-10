@@ -1,5 +1,4 @@
-import * as tf from '@tensorflow/tfjs-core';
-import * as tfd from '@tensorflow/tfjs-data';
+import * as tf from '@tensorflow/tfjs';
 import {iteratorFromItems, LazyIterator} from '@tensorflow/tfjs-data/dist/iterators/lazy_iterator';
 
 const IMAGE_H = 28;
@@ -15,8 +14,9 @@ const MNIST_IMAGES_SPRITE_PATH =
 const MNIST_LABELS_PATH =
     'https://storage.googleapis.com/learnjs-data/model-builder/mnist_labels_uint8';
 
-class ImageDataset extends tfd.Dataset<tfd.DataElement> {
+class ImageDataset extends tf.data.Dataset<tf.data.DataElement> {
   private _data: Array<[tf.Tensor1D, tf.Tensor1D]> = new Array();
+  private array = new Array();
 
   public constructor(images: Float32Array, labels: Uint8Array) {
     super();
@@ -25,26 +25,33 @@ class ImageDataset extends tfd.Dataset<tfd.DataElement> {
 
     let imageIndex = 0;
     let labelIndex = 0;
-    for (let i = 0; i < numberOfSamples; i++) {
+    for (let i = 0; i < 12 /* numberOfSamples*/; i++) {
+        const imageArray = images.slice(imageIndex, imageIndex + IMAGE_SIZE);
       const imageTensor =
-          tf.tensor1d(images.slice(imageIndex, imageIndex + IMAGE_SIZE));
+          tf.tensor1d(imageArray);
+          const labelArray =labels.slice(labelIndex, labelIndex + NUM_CLASSES);
       const labelTensor =
-          tf.tensor1d(labels.slice(labelIndex, labelIndex + NUM_CLASSES));
+          tf.tensor1d(labelArray);
       imageIndex += IMAGE_SIZE;
       labelIndex += NUM_CLASSES;
 
       this._data.push([imageTensor, labelTensor]);
+      this.array.push([imageArray, labelArray]);
     }
   }
 
-  async iterator(): Promise<LazyIterator<tfd.DataElement>> {
-    return iteratorFromItems<tfd.DataElement>(this._data);
+  async iterator(): Promise<LazyIterator<tf.data.DataElement>> {
+    return iteratorFromItems<tf.data.DataElement>(this._data);
+  }
+
+  getArray() {
+      return tf.data.array(this.array);
   }
 }
 
 export class MNISTDataset {
-  trainDataset: tfd.Dataset<tfd.DataElement> = null;
-  testDataset: tfd.Dataset<tfd.DataElement> = null;
+  trainDataset: tf.data.Dataset<tf.data.DataElement> = null;
+  testDataset: tf.data.Dataset<tf.data.DataElement> = null;
 
   private constructor() {}
 
@@ -116,7 +123,14 @@ export class MNISTDataset {
     const testImages = datasetImages.slice(IMAGE_SIZE * NUM_TRAIN_ELEMENTS);
     const testLabels = datasetLabels.slice(NUM_CLASSES * NUM_TRAIN_ELEMENTS);
 
-    this.trainDataset = new ImageDataset(trainImages, trainLabels);
-    this.testDataset = new ImageDataset(testImages, testLabels);
+    const train = new ImageDataset(trainImages, trainLabels);
+    const test = new ImageDataset(testImages, testLabels);
+
+    this.trainDataset = train.getArray();
+    this.testDataset = test.getArray();
+
+
+    // this.trainDataset = new ImageDataset(trainImages, trainLabels);
+    // this.testDataset = new ImageDataset(testImages, testLabels);
   }
 }

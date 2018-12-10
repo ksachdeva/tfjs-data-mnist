@@ -1,37 +1,41 @@
 {
-  "name": "tfjs-data-mnist",
-  "version": "0.1.2",
-  "description": "API for MNIST dataset built using tfjs-data",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
-  "scripts": {
-    "build": "tsc",
-    "lint": "tslint -p tsconfig.json",
-    "prepare": "npm run build",
-    "prepublishOnly": "npm run lint"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/ksachdeva/tfjs-data-mnist.git"
-  },
-  "keywords": [
-    "tensorflow.js",
-    "MNIST",
-    "dataset"
-  ],
-  "author": "Kapil Sachdeva",
-  "license": "Apache-2.0",
-  "bugs": {
-    "url": "https://github.com/ksachdeva/tfjs-data-mnist/issues"
-  },
-  "homepage": "https://github.com/ksachdeva/tfjs-data-mnist#readme",
-  "peerDependencies": {
-    "@tensorflow/tfjs-core": "^0.14.0",
-    "@tensorflow/tfjs-data": "^0.1.2"
-  },
-  "devDependencies": {
-    "typescript": "^3.2.1",
-    "tslint": "^5.11.0",
-    "ts-node": "^7.0.1"
-  }
+    "name": "tfjs-data-mnist",
+    "version": "0.1.2",
+    "description": "API for MNIST dataset built using tfjs-data",
+    "main": "dist/index.js",
+    "types": "dist/index.d.ts",
+    "scripts": {
+        "build": "tsc",
+        "lint": "tslint -p tsconfig.json",
+        "prepare": "npm run build",
+        "prepublishOnly": "npm run lint"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/ksachdeva/tfjs-data-mnist.git"
+    },
+    "keywords": [
+        "tensorflow.js",
+        "MNIST",
+        "dataset"
+    ],
+    "author": "Kapil Sachdeva",
+    "license": "Apache-2.0",
+    "bugs": {
+        "url": "https://github.com/ksachdeva/tfjs-data-mnist/issues"
+    },
+    "homepage": "https://github.com/ksachdeva/tfjs-data-mnist#readme",
+    "peerDependencies": {
+        "@tensorflow/tfjs": "0.14.1"
+    },
+    "devDependencies": {
+        "ts-node": "^7.0.1",
+        "tslint": "^5.11.0",
+        "typescript": "^3.2.1"
+    },
+    "dependencies": {
+        "@tensorflow/tfjs": "^0.14.1",
+        "@tensorflow/tfjs-core": "^0.14.2",
+        "@tensorflow/tfjs-data": "^0.1.4"
+    }
 }
