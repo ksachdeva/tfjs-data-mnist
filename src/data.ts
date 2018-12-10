@@ -25,13 +25,11 @@ class ImageDataset extends tf.data.Dataset<tf.data.DataElement> {
 
     let imageIndex = 0;
     let labelIndex = 0;
-    for (let i = 0; i < 12 /* numberOfSamples*/; i++) {
-        const imageArray = images.slice(imageIndex, imageIndex + IMAGE_SIZE);
-      const imageTensor =
-          tf.tensor1d(imageArray);
-          const labelArray =labels.slice(labelIndex, labelIndex + NUM_CLASSES);
-      const labelTensor =
-          tf.tensor1d(labelArray);
+    for (let i = 0; i < numberOfSamples; i++) {
+      const imageArray = images.slice(imageIndex, imageIndex + IMAGE_SIZE);
+      const imageTensor = tf.tensor1d(imageArray);
+      const labelArray = labels.slice(labelIndex, labelIndex + NUM_CLASSES);
+      const labelTensor = tf.tensor1d(labelArray);
       imageIndex += IMAGE_SIZE;
       labelIndex += NUM_CLASSES;
 
@@ -45,7 +43,7 @@ class ImageDataset extends tf.data.Dataset<tf.data.DataElement> {
   }
 
   getArray() {
-      return tf.data.array(this.array);
+    return tf.data.array(this.array);
   }
 }
 
@@ -128,9 +126,5 @@ export class MNISTDataset {
 
     this.trainDataset = train.getArray();
     this.testDataset = test.getArray();
-
-
-    // this.trainDataset = new ImageDataset(trainImages, trainLabels);
-    // this.testDataset = new ImageDataset(testImages, testLabels);
   }
 }
